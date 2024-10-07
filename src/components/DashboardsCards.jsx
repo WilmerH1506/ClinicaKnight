@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUserFriends, FaCalendarAlt, FaMoneyBillWave } from 'react-icons/fa';
+import { FaUserFriends, FaCalendarAlt, FaMoneyBillWave, FaBox } from 'react-icons/fa';
 import './DashboardsCards.css';
 
 // Crea un arreglo con los datos de las tarjetas
@@ -16,9 +16,9 @@ const cards = [
         icon: <FaCalendarAlt />,
     },
     {
-        title: 'Ingresos del Mes',
-        value: '$15,234',
-        icon: <FaMoneyBillWave />,
+        title: 'Productos Con Poca Existencia',
+        value: '3',
+        icon: <FaBox />,
     },
     ];
 

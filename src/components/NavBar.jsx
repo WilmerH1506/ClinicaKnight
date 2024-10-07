@@ -18,19 +18,19 @@ const NavBar = ({ onViewChange }) => {
           </button>
         </li>
         <li>
-          <button className="nav-button">
+          <button className="nav-button" onClick={() => onViewChange('Pacientes')}>
             <FaUserFriends className="nav-icon" />
             Pacientes
           </button>
         </li>
         <li>
-          <button className="nav-button">
+          <button className="nav-button" onClick={() => onViewChange('Citas')}>
             <FaCalendarAlt className="nav-icon" />
             Citas
           </button>
         </li>
         <li>
-          <button className="nav-button">
+          <button className="nav-button" onClick={() => onViewChange('Inventario')}>
             <FaBox className="nav-icon" />
             Inventario
           </button>
