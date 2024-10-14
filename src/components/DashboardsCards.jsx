@@ -2,8 +2,6 @@ import React from 'react';
 import { FaUserFriends, FaCalendarAlt, FaMoneyBillWave, FaBox } from 'react-icons/fa';
 import './DashboardsCards.css';
 
-// Crea un arreglo con los datos de las tarjetas
-
 const cards = [
     {
         title: 'Pacientes Totales',

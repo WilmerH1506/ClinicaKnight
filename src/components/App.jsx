@@ -13,6 +13,7 @@ const App = () => {
     setCurrentView(view);
   };
 
+
   let content;
   switch (currentView) 
   {
