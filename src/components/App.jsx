@@ -1,50 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
 import NavBar from './NavBar';
 import DashboardCards from './DashboardsCards';
 import Patients from './Patients';
 import Dates from './Dates';
 import Inventory from './Inventory';
 import './App.css';
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
 
 const App = () => {
-  const [currentView, setCurrentView] = useState('dashboard');
-
-  const handleViewChange = (view) => {
-    setCurrentView(view);
-  };
-
-
-  let content;
-  switch (currentView) 
-  {
-    case 'dashboard':
-      content = <DashboardCards />;
-      break;
-    
-    case 'Pacientes':
-      content = <Patients />;
-      break;
-
-    case 'Citas':
-      content = <Dates />;
-      break;
-    
-    case 'Inventario':
-      content = <Inventory />;
-      break;
-      
-    default:
-      content = null;
-      break;
-  }
-
   return (
-    <div>
-      <NavBar onViewChange={handleViewChange} />
-      <div className="content">
-        {content}
+    <BrowserRouter>
+      <div>
+        <NavBar />
+        <div className="content">
+          <Routes>
+            <Route path="/" element={<DashboardCards />} />
+            <Route path="/patients" element={<Patients />} />
+            <Route path="/dates" element={<Dates />} />
+            <Route path="/inventory" element={<Inventory />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </BrowserRouter>
   );
 };
 

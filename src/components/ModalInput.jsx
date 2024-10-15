@@ -1,7 +1,10 @@
 import React from 'react';
-import './Modal.css'; // Asegúrate de que esto apunte al archivo de estilos correcto.
+import { useForm } from 'react-hook-form';
+import './Modal.css'; 
 
 const Modal = ({ isOpen, onClose, inputs, title, onSubmit }) => {
+  const { register, handleSubmit } = useForm();
+
   if (!isOpen) return null;
 
   return (
@@ -13,7 +16,7 @@ const Modal = ({ isOpen, onClose, inputs, title, onSubmit }) => {
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           {inputs.map((input, index) => (
             <div key={index} className="form-group">
               <label>{input.label}</label>
@@ -21,8 +24,7 @@ const Modal = ({ isOpen, onClose, inputs, title, onSubmit }) => {
                 type={input.type || "text"}
                 name={input.name}
                 placeholder={input.placeholder || ""}
-                onChange={input.onChange}
-                value={input.value || ""}
+                {...register(input.name)} 
               />
             </div>
           ))}

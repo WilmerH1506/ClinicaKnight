@@ -1,25 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaEdit, FaTrashAlt, FaPlus } from 'react-icons/fa';
-import Modal from './ModalInput'; 
+import Modal from './ModalInput';
+import ConfirmationModal from './confirmModal'; 
+import { getPatients, registerPatients, deletePatient } from "../api/api.js"; 
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; 
 import './Patients.css';
 
-const initialPatientsData = [
-  { id: 1, name: 'Juan Pérez', DNI: '123456', phone: '555-1234', email: 'juan@example.com' },
-  { id: 2, name: 'María García', DNI: '123456', phone: '555-5678', email: 'maria@example.com' },
-  { id: 3, name: 'Pedro Martínez', DNI: '123456', phone: '555-8765', email: 'pedro@example.com' },
-  { id: 4, name: 'Ana López', DNI: '123456', phone: '555-4321', email: 'ana@example.com' },
-  { id: 5, name: 'Carlos Rivera', DNI: '123456', phone: '555-5678', email: 'carlos@example.com' },
-];
-
 const Patients = () => {
-  const [patients, setPatients] = useState(initialPatientsData);
+  const [patients, setPatients] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false); 
   const [modalTitle, setModalTitle] = useState('');
-  const [currentPatient, setCurrentPatient] = useState({ id: null, name: '', DNI: '', phone: '', email: '' });
+  const [currentPatient, setCurrentPatient] = useState({ Nombre: '', DNI: '', Telefono: '', Correo: '' });
+  const [patientToDelete, setPatientToDelete] = useState(null); 
 
-  const handleInputChange = (e) => {
-    setCurrentPatient({ ...currentPatient, [e.target.name]: e.target.value });
-  };
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const response = await getPatients();
+        setPatients(response);
+      } catch (error) {
+        console.error('Error fetching patients:', error);
+      }
+    };
+
+    fetchPatients();
+  }, []);
 
   const openModal = (patient = null) => {
     if (patient) {
@@ -27,7 +34,7 @@ const Patients = () => {
       setCurrentPatient(patient);
     } else {
       setModalTitle('Paciente Nuevo');
-      setCurrentPatient({ id: null, name: '', DNI: '', phone: '', email: '' });
+      setCurrentPatient({ Nombre: '', DNI: '', Telefono: '', Correo: '' });
     }
     setIsModalOpen(true);
   };
@@ -36,54 +43,67 @@ const Patients = () => {
     setIsModalOpen(false);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (currentPatient.id) {
-      // Editar paciente existente
-      setPatients(
-        patients.map((patient) => (patient.id === currentPatient.id ? currentPatient : patient))
-      );
-    } else {
-      // Agregar nuevo paciente
-      setPatients([...patients, { ...currentPatient, id: patients.length + 1 }]);
+  const openConfirmation = (id) => {
+    setPatientToDelete(id); 
+    setIsConfirmationOpen(true); 
+  };
+
+  const closeConfirmation = () => {
+    setIsConfirmationOpen(false);
+    setPatientToDelete(null); 
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deletePatient(patientToDelete); 
+      setPatients(patients.filter(p => p._id !== patientToDelete)); 
+      toast.success('Paciente eliminado con éxito!');
+      closeConfirmation(); 
+    } catch (error) {
+      console.error('Error deleting patient:', error);
+      toast.error('Error al eliminar el paciente.');
     }
-    closeModal();
+  };
+
+  const handleSubmit = async (data) => {
+    try {
+      const newPatient = await registerPatients(data);
+      setPatients([...patients, newPatient]);
+      toast.success('Paciente agregado con éxito!'); 
+      closeModal(); 
+    } catch (error) {
+      console.error('Error registering patient:', error);
+      toast.error('Error al agregar el paciente.'); 
+    }
   };
 
   const inputs = [
     {
       label: 'Nombre',
-      name: 'name',
-      value: currentPatient.name,
-      onChange: handleInputChange,
+      name: 'Nombre',
       placeholder: 'Ingrese el nombre',
     },
     {
       label: 'DNI',
       name: 'DNI',
-      value: currentPatient.DNI,
-      onChange: handleInputChange,
       placeholder: 'Ingrese el DNI',
     },
     {
       label: 'Teléfono',
-      name: 'phone',
-      value: currentPatient.phone,
-      onChange: handleInputChange,
+      name: 'Telefono',
       placeholder: 'Ingrese el teléfono',
     },
     {
       label: 'Correo',
-      name: 'email',
+      name: 'Correo',
       type: 'email',
-      value: currentPatient.email,
-      onChange: handleInputChange,
       placeholder: 'Ingrese el correo',
     },
   ];
 
   return (
     <div className="patients-container">
+      <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={true} />
       <div className="header">
         <h1>Pacientes</h1>
         <button className="new-patient-button" onClick={() => openModal()}>
@@ -104,16 +124,19 @@ const Patients = () => {
           </thead>
           <tbody>
             {patients.map((patient) => (
-              <tr key={patient.id}>
-                <td>{patient.name}</td>
+              <tr key={patient._id}>
+                <td>{patient.Nombre}</td>
                 <td>{patient.DNI}</td>
-                <td>{patient.phone}</td>
-                <td>{patient.email}</td>
+                <td>{patient.Telefono}</td>
+                <td>{patient.Correo}</td>
                 <td>
                   <button className="edit-button" onClick={() => openModal(patient)}>
                     <FaEdit /> Editar
                   </button>
-                  <button className="delete-button" onClick={() => setPatients(patients.filter(p => p.id !== patient.id))}>
+                  <button 
+                    className="delete-button" 
+                    onClick={() => openConfirmation(patient._id)} 
+                  >
                     <FaTrashAlt /> Eliminar
                   </button>
                 </td>
@@ -129,6 +152,14 @@ const Patients = () => {
         onClose={closeModal}
         inputs={inputs}
         title={modalTitle}
+        onSubmit={handleSubmit} 
+      />
+
+      {/* Modal de confirmación */}
+      <ConfirmationModal 
+        isOpen={isConfirmationOpen} 
+        onClose={closeConfirmation} 
+        onConfirm={handleDelete} 
       />
     </div>
   );

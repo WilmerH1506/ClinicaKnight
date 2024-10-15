@@ -1,6 +1,5 @@
 import Patient from '../models/patient.js';
 
-
 export const patients = async (req, res) => {
     try {
         const allPatients = await Patient.find();
@@ -25,3 +24,19 @@ export const registerpatients = async (req, res) => {
         res.status(409).json({message: error.message});
     }
 }
+
+export const deletePatient = async (req, res) => {
+    const { id } = req.body;
+
+    try {
+        const result = await Patient.deleteOne({ _id: id });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+
+        res.status(200).json({ message: 'Patient deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

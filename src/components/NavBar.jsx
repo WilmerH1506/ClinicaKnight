@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom'; 
 import { FaHome, FaUserFriends, FaCalendarAlt, FaBox } from 'react-icons/fa';
 import logo from '../assets/Logo.jpg';
 import './NavBar.css';
 
-const NavBar = ({ onViewChange }) => {
+const NavBar = () => {
   return (
     <nav className="navbar">
       <div className="title">
@@ -12,28 +13,28 @@ const NavBar = ({ onViewChange }) => {
       </div>
       <ul className="navbar-buttons">
         <li>
-          <button className="nav-button" onClick={() => onViewChange('dashboard')}>
+          <Link to="/" className="nav-button">
             <FaHome className="nav-icon" />
             Dashboard
-          </button>
+          </Link>
         </li>
         <li>
-          <button className="nav-button" onClick={() => onViewChange('Pacientes')}>
+          <Link to="/patients" className="nav-button">
             <FaUserFriends className="nav-icon" />
             Pacientes
-          </button>
+          </Link>
         </li>
         <li>
-          <button className="nav-button" onClick={() => onViewChange('Citas')}>
+          <Link to="/dates" className="nav-button">
             <FaCalendarAlt className="nav-icon" />
             Citas
-          </button>
+          </Link>
         </li>
         <li>
-          <button className="nav-button" onClick={() => onViewChange('Inventario')}>
+          <Link to="/inventory" className="nav-button">
             <FaBox className="nav-icon" />
             Inventario
-          </button>
+          </Link>
         </li>
       </ul>
     </nav>
